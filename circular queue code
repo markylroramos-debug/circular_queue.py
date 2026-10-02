@@ -1,0 +1,49 @@
+# 3. Circular Queue
+class CircularQueue:
+    def __init__(self, capacity):
+        self._capacity = capacity
+        self._items = [None] * capacity
+        self._front = 0
+        self._count = 0
+
+    def is_empty(self):
+        return self._count == 0
+
+    def is_full(self):
+        return self._count == self._capacity
+
+    def size(self):
+        return self._count
+
+    def enqueue(self, item):
+        if self.is_full():
+            raise OverflowError('enqueue on a full queue')
+        rear = (self._front + self._count) % self._capacity
+        self._items[rear] = item
+        self._count += 1
+
+    def dequeue(self):
+        if self.is_empty():
+            raise IndexError('dequeue from an empty queue')
+        item = self._items[self._front]
+        self._items[self._front] = None
+        self._front = (self._front + 1) % self._capacity
+        self._count -= 1
+        return item
+
+    def peek(self):
+        if self.is_empty():
+            raise IndexError('peek at an empty queue')
+        return self._items[self._front]
+
+queue = CircularQueue(4)
+queue.enqueue('A')
+queue.enqueue('B')
+queue.enqueue('C')
+print(queue._items, queue._front, queue.size())   # ['A', 'B', 'C', None] 0 3
+queue.dequeue()
+queue.dequeue()
+print(queue._items, queue._front, queue.size())   # [None, None, 'C', None] 2 1
+queue.enqueue('D')
+queue.enqueue('E')
+print(queue._items, queue._front, queue.size())   # ['E', None, 'C', 'D'] 2 3
